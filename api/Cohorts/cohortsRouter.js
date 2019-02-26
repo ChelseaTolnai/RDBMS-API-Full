@@ -44,6 +44,23 @@ cohortsRouter.get('/:id', async (req, res) => {
     }
 });
 
+cohortsRouter.get('/:id/students', async (req, res) => {
+    try {
+        const cohort = await db('cohorts')
+        .where({ id: req.params.id })
+        .first();
+        if (cohort) {
+            const students = await db('students')
+            .where({ cohort_id: req.params.id })
+            res.status(200).json(students);
+        } else {
+            res.status(404).json({error: "Cohort with specified ID does not exist."})
+        }
+    } catch (error) {
+        res.status(500).json({error: "Error getting students from specified cohort."})
+    }
+});
+
 cohortsRouter.put('/:id', async (req, res) => {
     try {
         const cohort = req.body;
